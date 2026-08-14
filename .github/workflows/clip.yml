@@ -7,7 +7,7 @@ on:
       video_url:
         description: 'YouTube Video URL to Clip'
         required: true
-        default: 'https://www.youtube.com/watch?v=BaW_jenozKc'
+        default: 'https://youtu.be/zcwwLx7Lp3Q?si=WyiVkUJOzHnHn2Mv'
 
 jobs:
   clip-video:
