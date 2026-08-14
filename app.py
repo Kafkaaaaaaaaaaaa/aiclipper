@@ -9,6 +9,7 @@ def process_video(url):
     ydl_opts = {
         'format': 'best[ext=mp4]/best',
         'outtmpl': 'source_video.mp4',
+        'cookiefile': 'cookies.txt',  # Uses the cookie secret safely
         'extractor_args': {'youtube': {'player_client': ['web_safari']}},
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15'
@@ -21,7 +22,6 @@ def process_video(url):
     print("[*] Processing and cropping to 9:16 vertical format...")
     clip = VideoFileClip("source_video.mp4")
     
-    # Crop center for 9:16 aspect ratio
     w, h = clip.size
     target_width = h * (9 / 16)
     x_center = w / 2
@@ -29,8 +29,6 @@ def process_video(url):
     x2 = x_center + (target_width / 2)
     
     cropped_clip = clip.crop(x1=x1, y1=0, x2=x2, y2=h)
-    
-    # Trim first 30 seconds as a sample Short
     short_clip = cropped_clip.subclipped(0, min(30, clip.duration))
     
     output_filename = "output_short.mp4"
