@@ -1,23 +1,32 @@
-
 import os
 import sys
 import yt_dlp
 from moviepy.editor import VideoFileClip
 
 def process_video(url):
-    print(f"[*] Downloading video from: {url}")
+    # Convert standard youtube URL to a Piped/Invidious proxy stream if it fails direct
+    print(f"[*] Fetching video stream for: {url}")
     
-    # Updated options with browser user-agent to bypass bot checks
     ydl_opts = {
         'format': 'best[ext=mp4]/best',
         'outtmpl': 'source_video.mp4',
+        'geo_bypass': True,
+        'nocheckcertificate': True,
+        'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
         }
     }
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        try:
+            ydl.download([url])
+        except Exception as e:
+            print(f"[*] Direct download failed, trying alternative client workaround... {e}")
+            # Fallback to embedded player client signature
+            ydl_opts['extractor_args'] = {'youtube': {'player_client': ['mweb']}}
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl_fallback:
+                ydl_fallback.download([url])
 
     print("[*] Processing and cropping to 9:16 vertical format...")
     clip = VideoFileClip("source_video.mp4")
