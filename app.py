@@ -6,9 +6,14 @@ from moviepy.editor import VideoFileClip
 
 def process_video(url):
     print(f"[*] Downloading video from: {url}")
+    
+    # Updated options with browser user-agent to bypass bot checks
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+        'format': 'best[ext=mp4]/best',
         'outtmpl': 'source_video.mp4',
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     }
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -34,6 +39,5 @@ def process_video(url):
     print(f"[*] Successfully generated: {output_filename}")
 
 if __name__ == "__main__":
-    # URL passed via environment variable from GitHub Actions
-    target_url = os.environ.get("VIDEO_URL", "https://www.youtube.com/watch?v=BaW_jenozKc")
+    target_url = os.environ.get("VIDEO_URL", "https://www.youtube.com/watch?v=jNQXAC9IVRw")
     process_video(target_url)
